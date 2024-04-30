@@ -20,25 +20,33 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData getlight() {
     return ThemeData(
-      brightness: Brightness.light,
-      textTheme: const TextTheme(
-        bodyMedium: TextStyle(color: Colors.black87),
-      ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Colors.greenAccent,
-      ),
-    );
+        brightness: Brightness.light,
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.black87),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.greenAccent,
+        ),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.greenAccent),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.greenAccent))),
+        fontFamily: "Robot");
   }
 
   ThemeData getdark() {
     return ThemeData(
-      brightness: Brightness.dark,
-      textTheme: TextTheme(
-        bodyMedium: TextStyle(color: Colors.blue.shade700),
-      ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Colors.white,
-      ),
-    );
+        brightness: Brightness.dark,
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(color: Colors.blue.shade700),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.grey,
+        ),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.grey),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.grey))),
+        fontFamily: "Rubik");
   }
 }
