@@ -3,6 +3,8 @@ import 'package:contact_diary/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'contact_provider.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -23,6 +25,9 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(
           create: (context) => ThemeProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ContactProvider(),
         )
       ],
       builder: (context, child) {

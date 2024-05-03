@@ -38,7 +38,7 @@ class ThemeProvider extends ChangeNotifier {
     return ThemeData(
         brightness: Brightness.dark,
         textTheme: TextTheme(
-          bodyMedium: TextStyle(color: Colors.blue.shade700),
+          bodyMedium: TextStyle(color: Colors.white),
         ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.grey,

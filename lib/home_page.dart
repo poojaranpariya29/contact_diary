@@ -1,6 +1,13 @@
 import 'package:contact_diary/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'add_page.dart';
+import 'contact_model.dart';
+import 'contact_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,19 +17,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int currentindex = 0;
+  void didChangeDependencies() {
+    SharedPreferences.getInstance().then((value) {
+      var themeMode = value.getInt("themeMode");
+      print("My Save Val $themeMode");
+      Provider.of<ThemeProvider>(context, listen: false)
+          .changetheme(themeMode ?? 0);
+    });
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           "CONTACT",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
+        actions: [
           Consumer<ThemeProvider>(
             builder: (BuildContext context, value, Widget? child) {
               return DropdownButton(
@@ -32,7 +46,10 @@ class _HomePageState extends State<HomePage> {
                   DropdownMenuItem(child: Text("Light"), value: 1),
                   DropdownMenuItem(child: Text("Dark"), value: 2),
                 ],
-                onChanged: (value) {
+                onChanged: (value) async {
+                  var instance = await SharedPreferences.getInstance();
+                  instance.setInt("themeMode", value ?? 0);
+
                   Provider.of<ThemeProvider>(context, listen: false)
                       .changetheme(value ?? 0);
                   print("value $value");
@@ -40,72 +57,82 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
-          SingleChildScrollView(
-            child: Stepper(
-                currentStep: currentindex,
-                onStepTapped: (index) {
-                  currentindex = index;
-                  setState(() {});
-                },
-                onStepContinue: () {
-                  if (currentindex < 3) {
-                    currentindex++;
-                    setState(() {});
-                  }
-                },
-                onStepCancel: () {
-                  if (currentindex > 0) {
-                    currentindex--;
-                    setState(() {});
-                  }
-                },
-                controlsBuilder: (context, details) {
-                  return Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: details.onStepContinue,
-                        child: Text(
-                          details.currentStep == 3 ? "Submit" : "Next",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      if (details.currentStep != 0)
-                        ElevatedButton(
-                          onPressed: details.onStepCancel,
-                          child: Text(
-                            "Back",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        )
-                    ],
-                  );
-                },
-                steps: [
-                  Step(
-                      title: Text("FIRST NAME:"),
-                      content: TextFormField(),
-                      isActive: currentindex == 0),
-                  Step(
-                      title: Text("LAST NAME:"),
-                      content: TextFormField(),
-                      isActive: currentindex == 1),
-                  Step(
-                      title: Text("PHONE:"),
-                      content: TextFormField(),
-                      isActive: currentindex == 2),
-                  Step(
-                      title: Text("EMAIL:"),
-                      content: TextFormField(),
-                      isActive: currentindex == 3),
-                ]),
-          ),
         ],
       ),
+      body: Consumer<ContactProvider>(
+        builder: (BuildContext context, ContactProvider value, Widget? child) {
+          return ListView.builder(
+            itemCount: value.contactList.length,
+            itemBuilder: (context, index) {
+              ContactModel contact = value.contactList[index];
+
+              return ListTile(
+                leading: InkWell(
+                  onTap: () {
+                    launchUrl(Uri.parse("tel:${contact.phone}"));
+                  },
+                  child: CircleAvatar(
+                    child: Text("${contact.fname ?? ""}"[0].toUpperCase()),
+                  ),
+                ),
+                title: Text(contact.fname ?? ""),
+                subtitle: Text(contact.phone ?? ""),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PopupMenuButton(
+                      child: Icon(Icons.add),
+                      tooltip: "",
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            child: Text("Delete"),
+                            onTap: () {
+                              Provider.of<ContactProvider>(context,
+                                      listen: false)
+                                  .deleteContact(index);
+                            },
+                          ),
+                          PopupMenuItem(
+                            child: Text("Share"),
+                            onTap: () {
+                              String con =
+                                  'Please Use this number ${contact.fname ?? ""},${contact.phone ?? ""} ';
+                              Share.share(con);
+                            },
+                          ),
+                          PopupMenuItem(
+                            child: Text("Edit"),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return AddPage(
+                                    index: index,
+                                  );
+                                },
+                              ));
+                            },
+                          ),
+                        ];
+                      },
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddPage(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
