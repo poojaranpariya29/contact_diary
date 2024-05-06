@@ -1,9 +1,4 @@
-class ContactModel {
-  String? fname;
-  String? lname;
-  String? phone;
-  String? email;
-  String? image;
-
-  ContactModel({this.fname, this.lname, this.phone, this.email, this.image});
+class ContactModal {
+  String? image, fname, lname, phone, email;
+  ContactModal({this.image, this.fname, this.lname, this.phone, this.email});
 }

@@ -1,13 +1,14 @@
+import 'dart:io';
+
 import 'package:contact_diary/theme_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'add_page.dart';
 import 'contact_model.dart';
 import 'contact_provider.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +21,6 @@ class _HomePageState extends State<HomePage> {
   void didChangeDependencies() {
     SharedPreferences.getInstance().then((value) {
       var themeMode = value.getInt("themeMode");
-      print("My Save Val $themeMode");
       Provider.of<ThemeProvider>(context, listen: false)
           .changetheme(themeMode ?? 0);
     });
@@ -37,25 +37,43 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         actions: [
-          Consumer<ThemeProvider>(
-            builder: (BuildContext context, value, Widget? child) {
-              return DropdownButton(
-                value: value.thememode,
-                items: [
-                  DropdownMenuItem(child: Text("System"), value: 0),
-                  DropdownMenuItem(child: Text("Light"), value: 1),
-                  DropdownMenuItem(child: Text("Dark"), value: 2),
-                ],
-                onChanged: (value) async {
-                  var instance = await SharedPreferences.getInstance();
-                  instance.setInt("themeMode", value ?? 0);
+          SingleChildScrollView(
+            child: Row(
+              children: [
+                Consumer<ThemeProvider>(
+                  builder: (BuildContext context, value, Widget? child) {
+                    return DropdownButton(
+                      value: value.thememode,
+                      items: [
+                        DropdownMenuItem(child: Text("System"), value: 0),
+                        DropdownMenuItem(child: Text("Light"), value: 1),
+                        DropdownMenuItem(child: Text("Dark"), value: 2),
+                      ],
+                      onChanged: (value) async {
+                        var instance = await SharedPreferences.getInstance();
+                        instance.setInt("themeMode", value ?? 0);
 
-                  Provider.of<ThemeProvider>(context, listen: false)
-                      .changetheme(value ?? 0);
-                  print("value $value");
-                },
-              );
-            },
+                        Provider.of<ThemeProvider>(context, listen: false)
+                            .changetheme(value ?? 0);
+                        print("value $value");
+                      },
+                    );
+                  },
+                ),
+                IconButton(
+                  onPressed: () async {
+                    var instance = await SharedPreferences.getInstance();
+                    instance.setBool("isLogin", false);
+                    Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (context) {
+                        return LoginPage();
+                      },
+                    ));
+                  },
+                  icon: Icon(Icons.logout),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -64,15 +82,19 @@ class _HomePageState extends State<HomePage> {
           return ListView.builder(
             itemCount: value.contactList.length,
             itemBuilder: (context, index) {
-              ContactModel contact = value.contactList[index];
+              ContactModal contact = value.contactList[index];
 
               return ListTile(
                 leading: InkWell(
                   onTap: () {
-                    launchUrl(Uri.parse("tel:${contact.phone}"));
+                    Navigator.pushNamed(context, "detail",
+                        arguments: value.contactList[index]);
                   },
                   child: CircleAvatar(
-                    child: Text("${contact.fname ?? ""}"[0].toUpperCase()),
+                    radius: 30,
+                    backgroundImage: FileImage(
+                      File(contact.image ?? ""),
+                    ),
                   ),
                 ),
                 title: Text(contact.fname ?? ""),
@@ -80,8 +102,16 @@ class _HomePageState extends State<HomePage> {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    InkWell(
+                      onTap: () {
+                        launchUrl(Uri.parse("tel:${contact.phone}"));
+                      },
+                      child: Icon(
+                        Icons.call,
+                        color: Colors.green,
+                      ),
+                    ),
                     PopupMenuButton(
-                      child: Icon(Icons.add),
                       tooltip: "",
                       itemBuilder: (context) {
                         return [
@@ -94,23 +124,10 @@ class _HomePageState extends State<HomePage> {
                             },
                           ),
                           PopupMenuItem(
-                            child: Text("Share"),
-                            onTap: () {
-                              String con =
-                                  'Please Use this number ${contact.fname ?? ""},${contact.phone ?? ""} ';
-                              Share.share(con);
-                            },
-                          ),
-                          PopupMenuItem(
                             child: Text("Edit"),
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return AddPage(
-                                    index: index,
-                                  );
-                                },
-                              ));
+                              Navigator.pushNamed(context, "add",
+                                  arguments: contact);
                             },
                           ),
                         ];
@@ -125,11 +142,9 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(
-              builder: (context) => AddPage(),
-            ),
+            "add",
           );
         },
         child: Icon(Icons.add),

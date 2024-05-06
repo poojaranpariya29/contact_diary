@@ -1,9 +1,12 @@
 import 'package:contact_diary/home_page.dart';
+import 'package:contact_diary/login_page.dart';
 import 'package:contact_diary/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'add_page.dart';
 import 'contact_provider.dart';
+import 'detail_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +39,13 @@ class _MyAppState extends State<MyApp> {
           theme: Provider.of<ThemeProvider>(context).getlight(),
           darkTheme: Provider.of<ThemeProvider>(context).getdark(),
           themeMode: Provider.of<ThemeProvider>(context).gettheme(),
-          home: HomePage(),
+          initialRoute: "/",
+          routes: {
+            "/": (context) => LoginPage(),
+            "home": (context) => HomePage(),
+            "add": (context) => AddPage(),
+            "detail": (context) => Detail_Page(),
+          },
         );
       },
     );
