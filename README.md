@@ -1,9 +1,10 @@
 # contact_diary
 
 A new Flutter project.
+![Screenshot_20240506_183751](https://github.com/poojaranpariya29/contact_diary/assets/148708401/8cf8a3b0-a042-4cfb-9ebf-8f0749f4ca2c)
 
-## Getting Starte![Screenshot_20240506_183627](https://github.com/poojaranpariya29/contact_diary/assets/148708401/37bfc1e8-8ba3-4a8a-8d45-f99d477d3feb)
-d
+## Getting StarteD
+![Screenshot_20240506_183627](https://github.com/poojaranpariya29/contact_diary/assets/148708401/37bfc1e8-8ba3-4a8a-8d45-f99d477d3feb)
 ![Screenshot_20240506_183448](https://github.com/poojaranpariya29/contact_diary/assets/148708401/e9c74b3f-3c26-4cb8-81fc-1c536834728b)
 
 This project is a starting point for a Flutter application.
