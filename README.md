@@ -1,5 +1,6 @@
 # contact_diary
-![Screenshot_20240506_183907](https://github.com/poojaranpariya29/contact_diary/assets/148708401/d113151b-8ade-46a2-8a81-450be0d8fcac)
+![Screenshot_20240506_183907]![Screenshot_20240506_183926](https://github.com/poojaranpariya29/contact_diary/assets/148708401/2f04bdcc-4581-47d9-8d8c-4061cd3e521f)
+(https://github.com/poojaranpariya29/contact_diary/assets/148708401/d113151b-8ade-46a2-8a81-450be0d8fcac)
 
 A new Flutter project.![Screenshot_20240506_183907]
 (https://github.com/poojaranpariya29/contact_diary/assets/148708401/39b8b117-0e33-4be5-a1cc-ae4e8f6c1973)
